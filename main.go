@@ -153,4 +153,7 @@ func main() {
 	if err := writeLines(outLines, communicationsLua); err != nil {
 		log.Fatalf("Making Changes: %s", err)
 	}
+
+	fmt.Print("Press 'Enter' to continue...")
+	bufio.NewReader(os.Stdin).ReadBytes('\n')
 }
