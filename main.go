@@ -98,15 +98,32 @@ func getAstralKeysPath() (string, error) {
 	return filepath.Join(wowDirectory, "_retail_/Interface/AddOns/AstralKeys"), nil
 }
 
+func exitPrompt(exitCode int) {
+	fmt.Println()
+	fmt.Print("Press 'Enter' to continue...")
+	bufio.NewReader(os.Stdin).ReadBytes('\n')
+	os.Exit(exitCode)
+}
+
+func fatalErrorExitPrompt(message string, err error) {
+	log.Printf(message, err)
+	exitPrompt(1)
+}
+
+func fatalExitPrompt(message string) {
+	log.Print(message)
+	exitPrompt(1)
+}
+
 func main() {
 	astralKeysPath, err := getAstralKeysPath()
 	if err != nil {
-		log.Fatalf("Get Astral Keys Path: %s", err)
+		fatalErrorExitPrompt("Get Astral Keys Path: %s", err)
 	}
 
 	communicationsLua := filepath.Join(astralKeysPath, "Communications.lua")
 	if !doesFileOrDirectoryExist(communicationsLua) {
-		log.Fatal("Unable to find Communications.lua")
+		fatalExitPrompt("Unable to find Communications.lua")
 	}
 
 	var sourcePath string
@@ -120,7 +137,7 @@ func main() {
 	fmt.Println("Please Enter the New Phrase to Use: ")
 	newKeyTitle, err := readUserInput()
 	if err != nil {
-		log.Fatalf("New Key Title: %s", err)
+		fatalErrorExitPrompt("New Key Title: %s", err)
 	}
 	newKeyTitle = strings.ReplaceAll(newKeyTitle, "\\", "\\\\")
 	newKeyTitle = strings.ReplaceAll(newKeyTitle, "'", "\\'")
@@ -130,13 +147,13 @@ func main() {
 	fmt.Println("Reading File: " + sourcePath)
 	lines, err := readLines(sourcePath)
 	if err != nil {
-		log.Fatalf("Open File: %s", err)
+		fatalErrorExitPrompt("Open File: %s", err)
 	}
 
 	if communicationsLua == sourcePath {
 		fmt.Println("Creating backup at: " + backupPath)
 		if err := writeLines(lines, backupPath); err != nil {
-			log.Fatalf("Backup File: %s", err)
+			fatalErrorExitPrompt("Backup File: %s", err)
 		}
 	}
 
@@ -151,9 +168,6 @@ func main() {
 
 	fmt.Println("Updating Communications.lua")
 	if err := writeLines(outLines, communicationsLua); err != nil {
-		log.Fatalf("Making Changes: %s", err)
+		fatalErrorExitPrompt("Making Changes: %s", err)
 	}
-
-	fmt.Print("Press 'Enter' to continue...")
-	bufio.NewReader(os.Stdin).ReadBytes('\n')
 }
