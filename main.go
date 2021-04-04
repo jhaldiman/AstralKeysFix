@@ -65,6 +65,8 @@ func getAstralKeysPath() (string, error) {
 		wowDirectory = filepath.Join(os.Getenv("PROGRAMFILES(X86)"), "World of Warcraft")
 	} else if doesFileOrDirectoryExist(filepath.Join(os.Getenv("PROGRAMFILES"), "World of Warcraft")) {
 		wowDirectory = filepath.Join(os.Getenv("PROGRAMFILES"), "World of Warcraft")
+	} else if doesFileOrDirectoryExist("D:\\Program Files (x86)\\World of Warcraft") {
+		wowDirectory = "D:\\Program Files (x86)\\World of Warcraft"
 	} else {
 		fmt.Println("Unable to Automatically Detect World of Warcraft Installation")
 		fmt.Println("Please Provide Path to the World of Warcraft Directory: ")
